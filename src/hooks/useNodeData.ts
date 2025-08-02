@@ -11,12 +11,6 @@ export const useNodeData = (refreshInterval: number = 30000) => {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   const updateNodesWithFreshData = (freshData: NodeProvider[]) => {
-    console.log('--- Start updateNodesWithFreshData ---');
-    console.log('Initial allSeenNodes length:', allSeenNodes.length);
-    console.log('Initial allSeenNodes providers:', allSeenNodes.map(n => n.resource_provider));
-    console.log('Fresh data length:', freshData.length);
-    console.log('Fresh data providers:', freshData.map(n => n.resource_provider));
-    
     const now = Date.now();
     const freshNodeIds = new Set(freshData.map(node => node.resource_provider));
     
@@ -46,9 +40,6 @@ export const useNodeData = (refreshInterval: number = 30000) => {
       }
     });
     
-    console.log('Updated nodes length (from mapping existing):', updatedNodes.length);
-    console.log('Updated nodes providers:', updatedNodes.map(n => n.resource_provider));
-    
     // Add any new nodes that we haven't seen before
     const existingNodeIds = new Set(allSeenNodes.map(node => node.resource_provider));
     const newNodes = freshData
@@ -59,15 +50,8 @@ export const useNodeData = (refreshInterval: number = 30000) => {
         isCurrentlyOnline: true
       }));
     
-    console.log('New nodes length:', newNodes.length);
-    console.log('New nodes providers:', newNodes.map(n => n.resource_provider));
-    
     // Combine updated existing nodes with new nodes
     const allNodes = [...updatedNodes, ...newNodes];
-    
-    console.log('Final allNodes length (to be saved):', allNodes.length);
-    console.log('Final allNodes providers:', allNodes.map(n => n.resource_provider));
-    console.log('--- End updateNodesWithFreshData ---');
     
     setAllSeenNodes(allNodes);
     
