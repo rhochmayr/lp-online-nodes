@@ -147,18 +147,6 @@ src/
 - **NodeCard**: Displays individual node information and controls
 - **StatsGrid**: Shows aggregate statistics for all/selected nodes
 
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
-
-## License
-
-This project is open source and available under the MIT License.
-
 ## Docker Deployment
 
 ### Prerequisites
@@ -313,6 +301,18 @@ docker-compose ps
 - **Single compose file**: Everything in one place
 - **Optional services**: Tunnel only runs when needed
 - **Environment-driven**: Control via `.env` file
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+## License
+
+This project is open source and available under the MIT License.
 
 ## Support
 
