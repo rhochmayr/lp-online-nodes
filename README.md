@@ -167,8 +167,6 @@ This project is open source and available under the MIT License.
 
 ### Quick Start
 
-#### Option 1: Using the helper script (recommended)
-
 1. **Copy the environment template**:
 ```bash
 cp .env.example .env
@@ -176,7 +174,11 @@ cp .env.example .env
 
 2. **Start the application**:
 ```bash
-./up.sh --build
+# Local only
+docker-compose up --build
+
+# With Cloudflare Tunnel (uncomment COMPOSE_PROFILES=tunnel in .env)
+docker-compose up --build
 ```
 
 3. **Access the application**:
@@ -187,13 +189,13 @@ cp .env.example .env
 docker-compose down
 ```
 
-#### Option 2: Using Docker Compose directly
+### Using Docker Compose directly
 
 ```bash
 # Local only
 docker-compose up --build
 
-# With Cloudflare Tunnel (if TUNNEL_TOKEN is set in .env)
+# With Cloudflare Tunnel
 COMPOSE_PROFILES=tunnel docker-compose up --build
 ```
 
@@ -235,10 +237,11 @@ COMPOSE_PROFILES=tunnel
 
 2. **Start with tunnel enabled**:
 ```bash
-# Using the helper script (auto-detects tunnel token)
-./up.sh --build -d
+# Enable the tunnel profile in .env by uncommenting:
+# COMPOSE_PROFILES=tunnel
+docker-compose up --build -d
 
-# Or manually enable the profile
+# Or enable the profile for a single command
 COMPOSE_PROFILES=tunnel docker-compose up --build -d
 ```
 
@@ -259,10 +262,9 @@ docker-compose logs cloudflare-tunnel
 docker-compose up --build
 
 # With Cloudflare Tunnel
+docker-compose up --build -d  # (with COMPOSE_PROFILES=tunnel in .env)
+# OR
 COMPOSE_PROFILES=tunnel docker-compose up --build -d
-
-# Using the helper script
-./up.sh --build -d
 
 # View logs
 docker-compose logs -f
@@ -292,7 +294,7 @@ docker-compose ps
 ### Troubleshooting
 
 #### Cloudflare Tunnel Issues
-- **Tunnel not starting**: Ensure `COMPOSE_PROFILES=tunnel` is set or use `./up.sh`
+- **Tunnel not starting**: Ensure `COMPOSE_PROFILES=tunnel` is set in `.env`
 - **Tunnel not connecting**: Check your `TUNNEL_TOKEN` in `.env`
 - **502 Bad Gateway**: Ensure the web app container is healthy before tunnel starts
 - **DNS issues**: Verify your domain is using Cloudflare nameservers
@@ -311,8 +313,6 @@ docker-compose ps
 - **Single compose file**: Everything in one place
 - **Optional services**: Tunnel only runs when needed
 - **Environment-driven**: Control via `.env` file
-- **No file juggling**: No need for multiple compose files
-- **Auto-detection**: Helper script automatically enables tunnel when token is present
 
 ## Support
 
