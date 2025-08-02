@@ -165,26 +165,43 @@ This project is open source and available under the MIT License.
 - Docker and Docker Compose installed
 - (Optional) Cloudflare account for tunnel setup
 
-### Local Development with Docker
+### Quick Start
 
-1. **Build and run the application**:
+#### Option 1: Using the helper script (recommended)
+
+1. **Copy the environment template**:
 ```bash
-docker-compose up --build
+cp .env.example .env
 ```
 
-2. **Access the application**:
+2. **Start the application**:
+```bash
+./up.sh --build
+```
+
+3. **Access the application**:
    - Open your browser to `http://localhost:3000`
 
-3. **Stop the application**:
+4. **Stop the application**:
 ```bash
 docker-compose down
 ```
 
-### Production Deployment with Cloudflare Tunnel
+#### Option 2: Using Docker Compose directly
 
-#### Step 1: Set up Cloudflare Tunnel
+```bash
+# Local only
+docker-compose up --build
 
-1. **Create a Cloudflare Tunnel**:
+# With Cloudflare Tunnel (if TUNNEL_TOKEN is set in .env)
+COMPOSE_PROFILES=tunnel docker-compose up --build
+```
+
+### Cloudflare Tunnel Setup
+
+#### Step 1: Create a Cloudflare Tunnel
+
+1. **Set up the tunnel**:
    - Go to [Cloudflare Dashboard](https://dash.cloudflare.com/)
    - Navigate to **Zero Trust** > **Access** > **Tunnels**
    - Click **Create a tunnel**
@@ -205,53 +222,51 @@ docker-compose down
      - **Service**: `http://gpu-dashboard:80`
    - Save the configuration
 
-#### Step 2: Configure Environment Variables
+#### Step 2: Enable the Tunnel
 
-1. **Copy the example environment file**:
-```bash
-cp .env.example .env
-```
-
-2. **Edit the `.env` file**:
+1. **Edit your `.env` file**:
 ```bash
 # Replace with your actual tunnel token
 TUNNEL_TOKEN=eyJhIjoiX...your_actual_token_here
+
+# Optional: Enable the tunnel profile
+COMPOSE_PROFILES=tunnel
 ```
 
-#### Step 3: Deploy with Cloudflare Tunnel
-
-1. **Start the application with Cloudflare Tunnel**:
+2. **Start with tunnel enabled**:
 ```bash
-docker-compose -f docker-compose.yml -f docker-compose.cloudflare.yml up --build -d
+# Using the helper script (auto-detects tunnel token)
+./up.sh --build -d
+
+# Or manually enable the profile
+COMPOSE_PROFILES=tunnel docker-compose up --build -d
 ```
 
-2. **Check the status**:
+3. **Check the status**:
 ```bash
-docker-compose -f docker-compose.yml -f docker-compose.cloudflare.yml ps
-docker-compose -f docker-compose.yml -f docker-compose.cloudflare.yml logs
+docker-compose ps
+docker-compose logs cloudflare-tunnel
 ```
 
-3. **Access your application**:
+4. **Access your application**:
    - Your app will be available at `https://gpu-dashboard.yourdomain.com`
    - Local access still available at `http://localhost:3000`
-
-#### Step 4: Stop the Services
-
-```bash
-docker-compose -f docker-compose.yml -f docker-compose.cloudflare.yml down
-```
 
 ### Docker Commands Reference
 
 ```bash
-# Build and start (local only)
+# Local development
 docker-compose up --build
 
-# Build and start with Cloudflare Tunnel
-docker-compose -f docker-compose.yml -f docker-compose.cloudflare.yml up --build -d
+# With Cloudflare Tunnel
+COMPOSE_PROFILES=tunnel docker-compose up --build -d
+
+# Using the helper script
+./up.sh --build -d
 
 # View logs
 docker-compose logs -f
+docker-compose logs cloudflare-tunnel
 
 # Stop services
 docker-compose down
@@ -261,23 +276,43 @@ docker-compose build --no-cache
 
 # Remove all containers and volumes
 docker-compose down -v --remove-orphans
+
+# Check which services are running
+docker-compose ps
 ```
+
+### Environment Variables
+
+| Variable | Description | Default | Required |
+|----------|-------------|---------|----------|
+| `APP_PORT` | Port for the web application | `3000` | No |
+| `TUNNEL_TOKEN` | Cloudflare tunnel token | - | Only for tunnel |
+| `COMPOSE_PROFILES` | Docker Compose profiles to activate | - | No |
 
 ### Troubleshooting
 
 #### Cloudflare Tunnel Issues
+- **Tunnel not starting**: Ensure `COMPOSE_PROFILES=tunnel` is set or use `./up.sh`
 - **Tunnel not connecting**: Check your `TUNNEL_TOKEN` in `.env`
-- **502 Bad Gateway**: Ensure the web app container is healthy
+- **502 Bad Gateway**: Ensure the web app container is healthy before tunnel starts
 - **DNS issues**: Verify your domain is using Cloudflare nameservers
 
 #### Application Issues
 - **Container won't start**: Check logs with `docker-compose logs gpu-dashboard`
-- **Build failures**: Ensure all dependencies are properly installed
-- **Port conflicts**: Change the port mapping in `docker-compose.yml`
+- **Build failures**: Try `docker-compose build --no-cache`
+- **Port conflicts**: Change `APP_PORT` in `.env`
 
 #### Health Checks
 - **Web app health**: `curl http://localhost:3000/health`
-- **Tunnel metrics**: `curl http://localhost:2000/metrics` (when tunnel is running)
+- **Tunnel metrics**: `curl http://localhost:2000/ready` (when tunnel is running)
+
+### Profile Benefits
+
+- **Single compose file**: Everything in one place
+- **Optional services**: Tunnel only runs when needed
+- **Environment-driven**: Control via `.env` file
+- **No file juggling**: No need for multiple compose files
+- **Auto-detection**: Helper script automatically enables tunnel when token is present
 
 ## Support
 
