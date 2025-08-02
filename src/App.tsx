@@ -4,13 +4,11 @@ import { useLocalStorage } from './hooks/useLocalStorage';
 import StatsGrid from './components/StatsGrid';
 import NodeCard from './components/NodeCard';
 import LoadingSpinner from './components/LoadingSpinner';
-import { PersistedNode } from './types';
 import { RefreshCw, Search, Activity, AlertCircle, ChevronDown } from 'lucide-react';
 
 function App() {
   const [refreshInterval, setRefreshInterval] = useState(30000);
   const { nodes, loading, error, lastUpdated, refetch, calculateStats } = useNodeData(refreshInterval);
-  const [selectedNodes, setSelectedNodes] = useLocalStorage<string[]>('selected-nodes', []);
   const [userNodes, setUserNodes] = useLocalStorage<string[]>('user-nodes', []);
   const [searchTerm, setSearchTerm] = useState('');
   const [showOnlineOnly, setShowOnlineOnly] = useState(false);
@@ -36,22 +34,6 @@ function App() {
 
     return () => clearInterval(interval);
   }, [refreshInterval, lastUpdated, loading]);
-  // Auto-select user nodes when nodes load
-  React.useEffect(() => {
-    if (nodes.length > 0 && userNodes.length > 0 && !loading) {
-      const userNodeIds = nodes
-        .filter(node => userNodes.includes(node.resource_provider))
-        .map(node => node.id);
-      
-      // Only update if there are new user nodes to select
-      const currentlySelected = new Set(selectedNodes);
-      const newUserNodes = userNodeIds.filter(id => !currentlySelected.has(id));
-      
-      if (newUserNodes.length > 0) {
-        setSelectedNodes(prev => [...new Set([...prev, ...newUserNodes])]);
-      }
-    }
-  }, [nodes, userNodes, selectedNodes, loading]);
 
   const refreshOptions = [
     { value: 5000, label: '5s' },
@@ -81,8 +63,8 @@ function App() {
   }, [nodes, searchTerm, showOnlineOnly]);
 
   const selectedNodeData = useMemo(() => {
-    return nodes.filter(node => selectedNodes.includes(node.id));
-  }, [nodes, selectedNodes]);
+    return nodes.filter(node => userNodes.includes(node.resource_provider));
+  }, [nodes, userNodes]);
 
   const allStats = useMemo(() => calculateStats(filteredNodes), [filteredNodes, calculateStats]);
   const selectedStats = useMemo(() => calculateStats(selectedNodeData), [selectedNodeData, calculateStats]);
@@ -118,17 +100,6 @@ function App() {
         ? prev.filter(rp => rp !== resourceProvider)
         : [...prev, resourceProvider]
     );
-    
-    // Auto-select/deselect all nodes from this resource provider
-    const providerNodes = nodes.filter(node => node.resource_provider === resourceProvider);
-    if (userNodes.includes(resourceProvider)) {
-      // Removing from user nodes, deselect all nodes from this provider
-      setSelectedNodes(prev => prev.filter(nodeId => !providerNodes.some(node => node.id === nodeId)));
-    } else {
-      // Adding to user nodes, select all nodes from this provider
-      const providerNodeIds = providerNodes.map(node => node.id);
-      setSelectedNodes(prev => [...new Set([...prev, ...providerNodeIds])]);
-    }
   };
 
   return (
@@ -245,7 +216,7 @@ function App() {
                     <NodeCard
                       key={node.id}
                       node={node}
-                      isSelected={selectedNodes.includes(node.id)}
+                      isSelected={userNodes.includes(node.resource_provider)}
                       onToggleUserNode={toggleUserNode}
                       isUserNode={true}
                     />
@@ -292,7 +263,7 @@ function App() {
                     <NodeCard
                       key={node.id}
                       node={node}
-                      isSelected={selectedNodes.includes(node.id)}
+                      isSelected={userNodes.includes(node.resource_provider)}
                       onToggleUserNode={toggleUserNode}
                     />
                   ))}
