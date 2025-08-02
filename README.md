@@ -159,6 +159,126 @@ src/
 
 This project is open source and available under the MIT License.
 
+## Docker Deployment
+
+### Prerequisites
+- Docker and Docker Compose installed
+- (Optional) Cloudflare account for tunnel setup
+
+### Local Development with Docker
+
+1. **Build and run the application**:
+```bash
+docker-compose up --build
+```
+
+2. **Access the application**:
+   - Open your browser to `http://localhost:3000`
+
+3. **Stop the application**:
+```bash
+docker-compose down
+```
+
+### Production Deployment with Cloudflare Tunnel
+
+#### Step 1: Set up Cloudflare Tunnel
+
+1. **Create a Cloudflare Tunnel**:
+   - Go to [Cloudflare Dashboard](https://dash.cloudflare.com/)
+   - Navigate to **Zero Trust** > **Access** > **Tunnels**
+   - Click **Create a tunnel**
+   - Choose **Cloudflared** and give your tunnel a name
+   - Save the tunnel
+
+2. **Get your tunnel token**:
+   - In the tunnel configuration, you'll see a command like:
+     ```bash
+     cloudflared service install eyJhIjoiX...
+     ```
+   - Copy the token (the long string after `install`)
+
+3. **Configure your tunnel**:
+   - In the **Public Hostnames** tab, add a route:
+     - **Subdomain**: `gpu-dashboard` (or your preferred subdomain)
+     - **Domain**: Your domain registered with Cloudflare
+     - **Service**: `http://gpu-dashboard:80`
+   - Save the configuration
+
+#### Step 2: Configure Environment Variables
+
+1. **Copy the example environment file**:
+```bash
+cp .env.example .env
+```
+
+2. **Edit the `.env` file**:
+```bash
+# Replace with your actual tunnel token
+TUNNEL_TOKEN=eyJhIjoiX...your_actual_token_here
+```
+
+#### Step 3: Deploy with Cloudflare Tunnel
+
+1. **Start the application with Cloudflare Tunnel**:
+```bash
+docker-compose -f docker-compose.yml -f docker-compose.cloudflare.yml up --build -d
+```
+
+2. **Check the status**:
+```bash
+docker-compose -f docker-compose.yml -f docker-compose.cloudflare.yml ps
+docker-compose -f docker-compose.yml -f docker-compose.cloudflare.yml logs
+```
+
+3. **Access your application**:
+   - Your app will be available at `https://gpu-dashboard.yourdomain.com`
+   - Local access still available at `http://localhost:3000`
+
+#### Step 4: Stop the Services
+
+```bash
+docker-compose -f docker-compose.yml -f docker-compose.cloudflare.yml down
+```
+
+### Docker Commands Reference
+
+```bash
+# Build and start (local only)
+docker-compose up --build
+
+# Build and start with Cloudflare Tunnel
+docker-compose -f docker-compose.yml -f docker-compose.cloudflare.yml up --build -d
+
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
+
+# Rebuild without cache
+docker-compose build --no-cache
+
+# Remove all containers and volumes
+docker-compose down -v --remove-orphans
+```
+
+### Troubleshooting
+
+#### Cloudflare Tunnel Issues
+- **Tunnel not connecting**: Check your `TUNNEL_TOKEN` in `.env`
+- **502 Bad Gateway**: Ensure the web app container is healthy
+- **DNS issues**: Verify your domain is using Cloudflare nameservers
+
+#### Application Issues
+- **Container won't start**: Check logs with `docker-compose logs gpu-dashboard`
+- **Build failures**: Ensure all dependencies are properly installed
+- **Port conflicts**: Change the port mapping in `docker-compose.yml`
+
+#### Health Checks
+- **Web app health**: `curl http://localhost:3000/health`
+- **Tunnel metrics**: `curl http://localhost:2000/metrics` (when tunnel is running)
+
 ## Support
 
 For issues or questions:
