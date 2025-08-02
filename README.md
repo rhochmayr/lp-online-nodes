@@ -2,36 +2,31 @@
 
 A real-time dashboard for monitoring GPU node providers on the Lilypad Testnet. This application provides comprehensive insights into available compute resources, allowing users to track and manage GPU nodes across the network.
 
+## Table of Contents
+
+- [Screenshots](#screenshots)
+- [Features](#features)
+- [Technology Stack](#technology-stack)
+- [Getting Started](#getting-started)
+- [Usage](#usage)
+- [Docker Deployment](#docker-deployment)
+- [Development](#development)
+- [Contributing](#contributing)
+- [License](#license)
+- [Support](#support)
+
+## Screenshots
+
+*Screenshots will be added here to showcase the dashboard interface*
+
 ## Features
 
-### 🔄 Real-time Monitoring
-- **Live Data Updates**: Automatic refresh every 5s-5m (configurable)
-- **Visual Progress Bar**: Shows countdown to next refresh
-- **Online/Offline Status**: Real-time availability tracking
-- **Persistent History**: Maintains records of all seen nodes
-
-### 📊 Comprehensive Statistics
-- Total and online provider counts
-- GPU inventory (count, models, VRAM)
-- CPU, RAM, and disk resources
-- Separate stats for selected nodes
-
-### 🎯 Node Management
-- **Mark Your Nodes**: Identify and track your own providers
-- **Smart Filtering**: Search by provider address or GPU model
-- **Availability Filter**: Show only currently online nodes
-- **Persistent Selection**: Your preferences survive page reloads
-
-### 💾 Data Persistence
-- **Local Storage**: All selections and node history saved locally
-- **Offline Tracking**: Maintains records of previously seen nodes
-- **Auto-selection**: Your marked nodes are automatically selected
-
-### 🎨 Modern UI
-- **Dark Theme**: Easy on the eyes for extended monitoring
-- **Responsive Design**: Works on desktop and mobile
-- **Real-time Indicators**: Visual status indicators and progress bars
-- **Intuitive Layout**: Clean, organized interface
+- **Real-time Monitoring**: Live data updates with configurable refresh intervals (5s-5m)
+- **Node Management**: Mark and track your own providers with persistent selection
+- **Smart Filtering**: Search by provider address or GPU model, filter by availability
+- **Comprehensive Statistics**: GPU inventory, VRAM, CPU, RAM, and disk resources
+- **Data Persistence**: All selections and node history saved locally
+- **Modern UI**: Dark theme, responsive design, real-time indicators
 
 ## Technology Stack
 
@@ -76,32 +71,9 @@ npm run preview
 
 ## Usage
 
-### Monitoring Nodes
-- The dashboard automatically loads and refreshes node data
-- Use the refresh interval dropdown to adjust update frequency
-- Toggle "Available Only" to filter out offline nodes
-- Search for specific providers or GPU models
-
-### Managing Your Nodes
-1. **Mark Nodes**: Click "Mark" on any node to add it to your collection
-2. **Your Nodes Section**: Marked nodes appear in a dedicated section
-3. **Auto-selection**: Your nodes are automatically selected for statistics
-4. **Persistent**: Your selections survive page reloads and refreshes
-
-### Understanding the Data
-
-#### Node Information
-- **Provider Address**: Truncated blockchain address
-- **Status**: Green (online) or Red (offline) indicator
-- **GPU Count**: Number of available GPUs
-- **VRAM**: Total video memory across all GPUs
-- **CPU/RAM/Disk**: Additional compute resources
-- **Last Seen**: Timestamp of last availability
-
-#### Statistics Grid
-- **Total/Selected**: Shows network totals vs your selected nodes
-- **Real-time Updates**: Statistics update with each refresh
-- **Resource Breakdown**: Detailed breakdown of all resource types
+- **Monitor Nodes**: Dashboard auto-refreshes with configurable intervals, filter by availability or search terms
+- **Manage Your Nodes**: Click "Mark" to add nodes to your collection, which appear in a dedicated section
+- **View Statistics**: Compare network totals vs your selected nodes with real-time resource breakdowns
 
 ## API Integration
 
