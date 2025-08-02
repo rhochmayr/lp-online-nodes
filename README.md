@@ -17,7 +17,7 @@ A real-time dashboard for monitoring GPU node providers on the Lilypad Testnet. 
 
 ## Screenshots
 
-<img width="1116" height="1128" alt="image" src="https://github.com/user-attachments/assets/39ffe3bd-c73b-4d5b-be7a-ea4475580469" />
+<img width="1116" height="733" alt="image" src="https://github.com/user-attachments/assets/847db8bb-ce72-4dbd-ab14-32c11958d940" />
 
 ## Features
 
